@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Display Query Params</title>
+</head>
+<body>
+<h1>Query Parameter aus der URL:</h1>
+<p id="output"></p>
+
+<script>
+  // Funktion zum Auslesen der Query-Parameter
+  const queryParams = new URLSearchParams(window.location.search);
+  const name = queryParams.get("name");
+
+  // Zeige den Parameter auf der Seite an
+  document.getElementById("output").textContent = name ? `Name: ${name}` : "Kein Name in der URL gefunden.";
+</script>
+</body>
+</html>

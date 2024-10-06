@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "443:443"  # HTTPS
+      - "80:80"    # HTTP (für Redirect zu HTTPS)
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Nginx-Konfigurationsdatei
+      - ./certs/selfsigned.crt:/etc/nginx/certs/selfsigned.crt  # Selbstsigniertes Zertifikat
+      - ./certs/selfsigned.key:/etc/nginx/certs/selfsigned.key  # Privater Schlüssel
+    networks:
+      - frontend  # Öffentliches Netzwerk
+      - backend   # Internes Netzwerk mit httpbin
+    depends_on:
+      - httpbin
+      - apache
+    restart: always
+
+  httpbin:
+    image: kennethreitz/httpbin
+    networks:
+      - backend  # Nur über das interne Netzwerk erreichbar
+
+  apache:
+    image: httpd:latest  # Apache HTTP Server
+    volumes:
+      - ./html:/usr/local/apache2/htdocs/public  # Nur den "public"-Ordner bereitstellen
+    networks:
+      - frontend  # Öffentliches Netzwerk (optional)
+      - backend   # Backend-Netzwerk (optional)
+
+networks:
+  frontend:
+    driver: bridge  # Öffentliches Netzwerk
+  backend:
+    driver: bridge  # Internes Netzwerk (nur zwischen nginx, apache und httpbin)
