@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    image: php:apache
+    container_name: php_apache_redbean
+    ports:
+      - "80:80"
+    volumes:
+      - ./php:/var/www/html
+    depends_on:
+      - db
+    command: /bin/sh -c "curl -L https://redbeanphp.com/downloadredbeanversion.php?f=all-drivers -o redbeanphp.tar.gz && tar -xvzf redbeanphp.tar.gz -C /var/www/html/ && rm redbeanphp.tar.gz && apache2-foreground"
+
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
