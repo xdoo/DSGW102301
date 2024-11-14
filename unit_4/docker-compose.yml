@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     image: php:apache
@@ -10,19 +8,31 @@ services:
       - ./php:/var/www/html
     depends_on:
       - db
-    command: /bin/sh -c "curl -L https://redbeanphp.com/downloadredbeanversion.php?f=all-drivers -o redbeanphp.tar.gz && tar -xvzf redbeanphp.tar.gz -C /var/www/html/ && rm redbeanphp.tar.gz && apache2-foreground"
+    command: /bin/sh -c "apt-get update && apt-get install -y libmariadb-dev && docker-php-ext-install pdo pdo_mysql && curl -L https://redbeanphp.com/downloadredbeanversion.php?f=all-drivers -o redbeanphp.tar.gz && tar -xvzf redbeanphp.tar.gz -C /var/www/html/ && rm redbeanphp.tar.gz && apache2-foreground"
 
   db:
-    image: postgres:latest
-    container_name: postgres_db
+    image: mysql:latest
+    container_name: mysql_db
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-    volumes:
-      - db_data:/var/lib/postgresql/data
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: user
+      PMA_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - db
 
 volumes:
   db_data:
