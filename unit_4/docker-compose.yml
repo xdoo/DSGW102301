@@ -8,7 +8,7 @@ services:
       - ./php:/var/www/html
     depends_on:
       - db
-    command: /bin/sh -c "apt-get update && apt-get install -y libmariadb-dev && docker-php-ext-install pdo pdo_mysql && curl -L https://redbeanphp.com/downloadredbeanversion.php?f=all-drivers -o redbeanphp.tar.gz && tar -xvzf redbeanphp.tar.gz -C /var/www/html/ && rm redbeanphp.tar.gz && apache2-foreground"
+    command: /bin/sh -c "apt-get update && apt-get install -y libmariadb-dev && docker-php-ext-install pdo pdo_mysql mysqli && curl -L https://redbeanphp.com/downloadredbeanversion.php?f=all-drivers -o redbeanphp.tar.gz && tar -xvzf redbeanphp.tar.gz -C /var/www/html/ && rm redbeanphp.tar.gz && apache2-foreground"
 
   db:
     image: mysql:latest
